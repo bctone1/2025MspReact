@@ -23,8 +23,8 @@ export const handler = NextAuth({
           });
           
           if (res.status === 200) {
-            console.log(res.data);
             return {
+              id: res.data.id,
               name: res.data.name,
               email: res.data.email,
               message: res.data.message,
@@ -33,7 +33,7 @@ export const handler = NextAuth({
           }
           return null;
         } catch (error) {
-          console.error("에러 발생:", error);  // 에러 출력
+          console.error("에러 발생:", error);
           throw new Error("Invalid credentials");
         }
       },
@@ -44,8 +44,23 @@ export const handler = NextAuth({
     error: "/auth/error",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account.provider === "google") {
+        try {
+          // Google 로그인 성공 후 백엔드로 사용자 정보 전송
+          await axios.post("http://127.0.0.1:5000/login", {
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          });
+        } catch (error) {
+          console.error("Google 로그인 후 백엔드 전송 실패:", error);
+          return false; // 로그인 중단
+        }
+      }
+      return true; // 로그인 계속 진행
+    },
     async jwt({ token, user }) {
-      // 로그인 성공 후 user 객체가 존재하면 token에 추가
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -55,7 +70,6 @@ export const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      // 세션에 JWT 토큰 정보 추가
       session.user.id = token.id;
       session.user.email = token.email;
       session.user.message = token.message;

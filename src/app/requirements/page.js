@@ -1,18 +1,88 @@
 "use client";
 import Sidebar from "@/components/Sidebar"; // Header 임포트
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Bot, MessageSquare, Save, Edit2, Trash2,
   FileText, Plus
 } from 'lucide-react';
 
+import { useSearchParams } from 'next/navigation';
+
 const MVPRequirementSession = () => {
-  // 요구사항 관리 상태
+
   const [requirements, setRequirements] = useState([]);
-  
-  // 대화 메시지 상태
+
+  const saveRequirement = async (req) => {
+    console.log(req);
+    console.log(project_id);
+
+    const response = await fetch("http://localhost:5000/saveRequirement", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ project_id: project_id, req: req }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+    } else {
+      console.error("Failed to fetch data");
+    }
+
+
+
+  }
+
+  const searchParams = useSearchParams();
+  const project_id = searchParams.get("project_id");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/requirementsList", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ project_id: project_id }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // console.log(data);
+          const formattedRequirements = data.map(item => {
+            return {
+              id: item[0],  // id
+              title: item[2],  // title
+              description: item[3],  // description
+              category: item[4],  // category
+              priority: item[5],  // priority
+              status: item[6],  // status
+              useCases: item[7],  // useCases (array)
+              constraints: item[8],  // constraints (array)
+            };
+          });
+
+          // Update the requirements state
+          setRequirements(prevRequirements => [...prevRequirements, ...formattedRequirements]);
+
+        } else {
+          console.error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [project_id]);
+
+
+
+
+
+
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -20,51 +90,74 @@ const MVPRequirementSession = () => {
       content: '새로운 요구사항 분석을 시작합니다. 프로젝트의 목표와 필요한 기능들을 분석하겠습니다.'
     }
   ]);
-
   const [messageInput, setMessageInput] = useState('');
 
-  // 메시지 전송 처리
-  const handleSendMessage = () => {
-    if (!messageInput.trim()) return;
 
+  const handleSendMessage = async () => {
+    // alert("클릭");
+    if (!messageInput.trim()) return;
     const newMessage = {
       id: messages.length + 1,
       role: 'user',
       content: messageInput
     };
-
-    setMessages([...messages, newMessage]);
     setMessageInput('');
 
-    // AI 응답 시뮬레이션
-    setTimeout(() => {
-      const suggestion = {
-        id: requirements.length + 1,
-        title: '프로젝트 생성 및 관리',
-        description: '사용자가 새로운 프로젝트를 생성하고 관리할 수 있는 기능',
-        category: '기능적',
-        priority: 'high',
-        status: 'draft',
-        useCases: [
-          '사용자는 새 프로젝트를 생성할 수 있다',
-          '프로젝트의 기본 정보를 설정할 수 있다',
-          '프로젝트 목록을 조회할 수 있다'
-        ],
-        constraints: [
-          '프로젝트 이름은 중복될 수 없다',
-          '프로젝트 설명은 최대 1000자까지 입력 가능'
-        ]
-      };
+    setMessages([...messages, newMessage]);
+    const response = await fetch("http://localhost:5000/requestconversation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messageInput: messageInput }),
+    });
 
-      const aiResponse = {
-        id: messages.length + 2,
-        role: 'assistant',
-        content: '요구사항을 다음과 같이 정리했습니다.',
-        suggestion
-      };
+    const data = await response.json();
 
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+    if (response.ok) {
+      console.log(data);
+    } else {
+      alert("오류발생");
+    }
+
+    const suggestion = {
+      id: requirements.length + 1,
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      priority: data.priority,
+      status: 'draft',
+      useCases: data.useCases,
+      constraints: data.constraints
+    };
+
+    // const suggestion = {
+    //   id: requirements.length + 1,
+    //   title: '프로젝트 생성 및 관리',
+    //   description: '사용자가 새로운 프로젝트를 생성하고 관리할 수 있는 기능',
+    //   category: '기능적',
+    //   priority: 'high',
+    //   status: 'draft',
+    //   useCases: [
+    //     '사용자는 새 프로젝트를 생성할 수 있다',
+    //     '프로젝트의 기본 정보를 설정할 수 있다',
+    //     '프로젝트 목록을 조회할 수 있다'
+    //   ],
+    //   constraints: [
+    //     '프로젝트 이름은 중복될 수 없다',
+    //     '프로젝트 설명은 최대 1000자까지 입력 가능'
+    //   ]
+    // };
+
+    const aiResponse = {
+      id: messages.length + 2,
+      role: 'assistant',
+      content: '요구사항을 다음과 같이 정리했습니다.',
+      suggestion
+    };
+
+    setMessages(prev => [...prev, aiResponse]);
+
   };
 
   return (
@@ -85,13 +178,12 @@ const MVPRequirementSession = () => {
                 key={message.id}
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`max-w-[80%] ${
-                  message.role === 'user' 
-                    ? 'bg-blue-500 text-white rounded-l-lg rounded-tr-lg' 
-                    : message.role === 'system'
+                <div className={`max-w-[80%] ${message.role === 'user'
+                  ? 'bg-blue-500 text-white rounded-l-lg rounded-tr-lg'
+                  : message.role === 'system'
                     ? 'bg-gray-100 text-gray-600 rounded-lg'
                     : 'bg-white border rounded-r-lg rounded-tl-lg'
-                } p-4 shadow-sm`}>
+                  } p-4 shadow-sm`}>
                   <p className="text-sm mb-1">{message.content}</p>
                   {message.suggestion && (
                     <Card className="mt-3 bg-blue-50 border-blue-200">
@@ -101,12 +193,12 @@ const MVPRequirementSession = () => {
                             <FileText className="w-4 h-4" />
                             <h3 className="font-medium">{message.suggestion.title}</h3>
                           </div>
-                          <button 
+                          <button
                             onClick={() => setRequirements([...requirements, message.suggestion])}
                             className="px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
                           >
-                            <Save className="w-4 h-4" />
-                            저장
+                            {/* <Save className="w-4 h-4" /> */}
+                            추가
                           </button>
                         </div>
 
@@ -187,18 +279,21 @@ const MVPRequirementSession = () => {
                       <Badge>{req.category}</Badge>
                       <Badge className={
                         req.priority === 'high' ? 'bg-red-100 text-red-700' :
-                        req.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-blue-100 text-blue-700'
+                          req.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-blue-100 text-blue-700'
                       }>
                         {req.priority}
                       </Badge>
                       <Badge variant="outline">{req.status}</Badge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="p-1.5 hover:bg-gray-100 rounded">
-                        <Edit2 className="w-4 h-4 text-gray-500" />
+                      <button className="p-1.5 hover:bg-gray-100 rounded" onClick={() => saveRequirement(req)}>
+                        <Save className="w-4 h-4 text-blue-500" />
                       </button>
-                      <button 
+                      {/* <button className="p-1.5 hover:bg-gray-100 rounded">
+                        <Edit2 className="w-4 h-4 text-gray-500" />
+                      </button> */}
+                      <button
                         onClick={() => setRequirements(requirements.filter(r => r.id !== req.id))}
                         className="p-1.5 hover:bg-red-100 rounded"
                       >
@@ -212,7 +307,15 @@ const MVPRequirementSession = () => {
 
                   <div className="space-y-4">
                     <div>
-                      <div className="text-sm font-medium mb-2">사용 사례:</div>
+                      <div className="text-sm font-medium mb-2">요구사항 정의:</div>
+                      <div className="space-y-1">
+                        <textarea className="text-sm bg-white p-2 rounded border w-full" defaultValue={req.description}></textarea>
+
+                      </div>
+
+                    </div>
+                    {/* <div>
+                      <div className="text-sm font-medium mb-2">사용 사례2:</div>
                       <div className="space-y-1">
                         {req.useCases.map((useCase, idx) => (
                           <div key={idx} className="text-sm bg-white p-2 rounded border">
@@ -231,8 +334,10 @@ const MVPRequirementSession = () => {
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </div> */}
                   </div>
+
+
                 </CardContent>
               </Card>
             ))}

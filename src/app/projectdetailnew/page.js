@@ -11,19 +11,60 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useSearchParams } from 'next/navigation';
+
+import axios from 'axios';
+import { useEffect } from 'react';
+
 
 const ProjectDetailDashboard = () => {
+
   const [selectedPhase, setSelectedPhase] = useState('setup');
   const [showNewChangeDialog, setShowNewChangeDialog] = useState(false);
+  const searchParams = useSearchParams();
+  const project_id = searchParams.get("project_id");
+  const email = searchParams.get("user_email");
+  // alert(project_id);
 
   // 프로젝트 정보
-  const project = {
-    name: "LLM MSP 시스템 개발",
-    description: "다중 LLM 통합 관리 시스템",
-    status: "active",
-    startDate: "2024-03-20",
-    endDate: "2024-06-20"
+  const [project, setproject] = useState({
+    name: '',
+    description: '',
+    status: '',
+    startDate: '',
+    endDate: ''
+  });
+  
+  const handleprojects = async () => {
+    const response = await fetch("http://localhost:5000/projectsList", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ project_id: project_id, email : email }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      console.log(data[0]);
+      const newdata = data[0]
+      setproject((prevProject) => ({
+        ...prevProject,
+        name: newdata['project_name'],
+        description : newdata['description'],
+        status : 'completed',
+        startDate : newdata['start_date'],
+        endDate : newdata['end_date'],
+      }));
+    } else {
+      alert(data.message);
+    }
+
   };
+  useEffect(() => {
+    handleprojects();
+  }, []);
+
+  
 
   // 주요 단계 정보
   const phases = [
@@ -35,22 +76,16 @@ const ProjectDetailDashboard = () => {
           id: 'project-setup',
           title: '프로젝트 생성',
           status: 'completed',
-          // progress: 100,
-          // component: 'new-project-dialog.tsx'
         },
         {
           id: 'team-setup',
           title: '팀 구성',
           status: 'completed',
-          // progress: 100,
-          // component: 'team-management.tsx'
         },
         {
           id: 'llm-setup',
           title: 'LLM 선택 및 설정',
           status: 'completed',
-          // progress: 100,
-          // component: 'llm-settings.tsx'
         }
       ]
     },
@@ -62,117 +97,33 @@ const ProjectDetailDashboard = () => {
           id: 'requirements',
           title: '요구사항 분석',
           status: 'in_progress',
-          // progress: 65,
-          // component: 'mvp-requirements-session.tsx'
+          location : '/requirements?project_id='+project_id
         },
         {
           id: 'architecture',
           title: '시스템 설계',
           status: 'in_progress',
-          // progress: 40,
-          // component: 'enhanced-design-document-manager.tsx'
+          location : '/systemSetting'
         },
         {
           id: 'database',
           title: 'DB 스키마 설계',
           status: 'in_progress',
-          // progress: 30,
-          // component: 'schema-designer.tsx'
+          location : '/database'
         },
-        {
-          id: 'api',
-          title: 'API 스펙 정의',
-          status: 'pending',
-          // progress: 0,
-          // component: 'api-spec-manager.tsx'
-        },
-        {
-          id: 'guide',
-          title: '구현 가이드 작성',
-          status: 'pending',
-          // progress: 0,
-          // component: 'implementation-guide-manager.tsx'
-        }
+        
       ]
     },
     {
       id: 'cording',
       title: '3. 코드생성',
       items: [
-        {
-          id: 'requirements',
-          title: '헤더 생성',
-          status: 'in_progress',
-          // progress: 65,
-          // component: 'mvp-requirements-session.tsx'
-        },
-      ]
-    },
-    {
-      id: 'management',
-      title: '3. 프로젝트 관리',
-      items: [
-        {
-          id: 'sessions',
-          title: '세션 관리',
-          description: 'LLM 대화 세션 기록 및 관리',
-          status: 'in_progress',
-          // progress: 45,
-          // component: 'session-archive.tsx',
-          // stats: {
-          //   total: 85,
-          //   active: 12,
-          //   archived: 73
-          // }
-        },
-        {
-          id: 'knowledge',
-          title: '지식 관리',
-          description: '설계 문서 및 의사결정 사항 관리',
-          status: 'in_progress',
-          // progress: 40,
-          // component: 'knowledge-base-manager.tsx',
-          // stats: {
-          //   documents: 34,
-          //   decisions: 28
-          // }
-        },
-        {
-          id: 'changes',
-          title: '변경 사항 추적 관리',
-          description: '변경 요청 및 이력 관리',
-          status: 'in_progress',
-          // progress: 35,
-          // component: 'mvp-enhanced-change-tracker.tsx',
-          // stats: {
-          //   total: 19,
-          //   pending: 6,
-          //   approved: 13
-          // }
-        }
+        
       ]
     }
   ];
 
-  // 변경 사항 목록
-  const changes = [
-    {
-      id: 1,
-      phase: '요구사항',
-      title: '사용자 인증 방식 변경',
-      description: 'OAuth2.0 기반 인증 시스템으로 변경',
-      status: 'pending',
-      date: '2024-03-28'
-    },
-    {
-      id: 2,
-      phase: 'DB 스키마',
-      title: '사용자 테이블 수정',
-      description: 'last_login 필드 추가',
-      status: 'approved',
-      date: '2024-03-27'
-    }
-  ];
+  
 
   return (
     <div className="min-h-screen flex bg-gray-100">
@@ -181,6 +132,8 @@ const ProjectDetailDashboard = () => {
         {/* Header */}
         <div className="bg-white border-b px-6 py-4">
           <div className="flex justify-between items-start mb-4">
+
+            
             <div>
               <h1 className="text-xl font-semibold">{project.name}</h1>
               <p className="text-sm text-gray-500">{project.description}</p>
@@ -189,7 +142,7 @@ const ProjectDetailDashboard = () => {
           </div>
 
           <div className="text-sm text-gray-500">
-            {project.startDate} - {project.endDate}
+            {project.startDate} ~ {project.endDate}
           </div>
 
           {/* Phase Navigation */}
@@ -233,7 +186,7 @@ const ProjectDetailDashboard = () => {
                 .find(p => p.id === selectedPhase)
                 ?.items.map(item => (
                   <Card key={item.id} className="hover:border-blue-200">
-                    <CardContent className="p-4">
+                    <CardContent className="p-4" onClick={() => window.location.href = item.location}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <h3 className="font-medium">{item.title}</h3>
@@ -325,6 +278,8 @@ const ProjectDetailDashboard = () => {
                   ))}
                 </div>
               )}
+
+
             </div>
 
             {/* Right Summary */}

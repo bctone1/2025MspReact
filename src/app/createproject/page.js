@@ -13,8 +13,10 @@ import {
   MessageSquare,
   Sparkles
 } from "lucide-react";
+import { useSession} from "next-auth/react";
 
 const MVPProjectCreation = () => {
+  const { data: session } = useSession();
   const [currentStep, setCurrentStep] = useState(1);
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([
@@ -32,8 +34,11 @@ const MVPProjectCreation = () => {
     language: "",
     framework: "",
     team: [],
-    llm: []
+    llm: [],
+    useremail : ""
   });
+
+  
 
   const techStacks = {
     JavaScript: ["React", "Vue.js", "Next.js"],
@@ -92,23 +97,23 @@ const MVPProjectCreation = () => {
     setCurrentStep(prev => prev + 1);
   };
   const newproject = async () => {
-    alert("dkdkdk");
+    console.log(projectInfo);
+    
     const now = new Date();
     const formattedDateTime = now.toISOString().slice(0, 19).replace(/[-:T]/g, '');
     const indexName = `msp${formattedDateTime}`;
-
 
     const response = await fetch("http://localhost:5000/createproject", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ indexname: indexName }),
+      body: JSON.stringify({ projectInfo: projectInfo, useremail : session.user.email}),
     });
     const data = await response.json();
     if (response.ok) {
       alert(data.message);
-      window.location.href = "/projectdetailnew"
+      // window.location.href = "/projectdetailnew"
     } else {
       alert("프로젝트 생성 실패");
       console.error("프로젝트 생성 실패:", response.statusText);

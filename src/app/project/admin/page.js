@@ -17,7 +17,7 @@ const Project = () => {
   }, [session, status]); // session과 status가 변경될 때 실행
 
   const fetchProjects = async (email) => {
-    const response = await fetch("http://localhost:5000/projectsList", {
+    const response = await fetch("http://localhost:5000/projectsListAdmin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,43 +31,8 @@ const Project = () => {
     } else {
       alert("오류발생");
     }
-
-
   };
 
-  const projects_bdfore = [
-    {
-      title: "LLM MSP 시스템 개발",
-      description: "다중 LLM 통합 관리 시스템",
-      status: "진행 중",
-      progress: 45,
-      startDate: "2024-03-20",
-      endDate: "2024-06-20",
-      teamSize: 5,
-      tools: ["GPT-4", "Claude"],
-    },
-    {
-      title: "AI 챗봇 프로젝트",
-      description: "고객 서비스 자동화 시스템",
-      status: "진행 중",
-      progress: 75,
-      startDate: "2024-02-15",
-      endDate: "2024-05-30",
-      teamSize: 3,
-      tools: ["GPT-4"],
-    },
-    {
-      title: "데이터 분석 도구",
-      description: "LLM 기반 데이터 분석 도구",
-      status: "완료",
-      progress: 100,
-      startDate: "2024-01-10",
-      endDate: "2024-03-15",
-      teamSize: 4,
-      tools: ["Claude", "PaLM"],
-    },
-  ];
-  
 
   // 상태 관리
   const [searchTerm, setSearchTerm] = useState(""); // 검색어
