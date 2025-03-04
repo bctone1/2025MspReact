@@ -17,13 +17,13 @@ import { useSession, signOut } from "next-auth/react";
 export default function Sidebar() {
   const { data: session } = useSession();
 
-  useEffect(() => {
-    if (session) {
-      console.log(session.user);
-    } else {
-      console.log("No session found");
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session) {
+  //     console.log(session.user);
+  //   } else {
+  //     console.log("No session found");
+  //   }
+  // }, [session]);
 
   // 로그아웃 핸들러
   const handleLogout = () => {
@@ -104,11 +104,11 @@ export default function Sidebar() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/model_setting"
                   className="flex items-center p-2 rounded-lg hover:bg-gray-800"
                 >
                   <CogIcon className="h-6 w-6 mr-2" />
-                  <span>LLM / API</span>
+                  <span>언어모델 관리</span>
                 </a>
               </li>
               {/* <li>
@@ -132,14 +132,14 @@ export default function Sidebar() {
               
               <li>
                 <a
-                  href="#"
+                  href="/const"
                   className="flex items-center p-2 rounded-lg hover:bg-gray-800"
                 >
                   <ChartBarIcon className="h-6 w-6 mr-2" />
                   <span>비용 통계</span>
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   href="/conversation"
                   className="flex items-center p-2 rounded-lg hover:bg-gray-800"
@@ -147,7 +147,7 @@ export default function Sidebar() {
                   <PaperAirplaneIcon className="h-6 w-6 mr-2" />
                   <span>대화 시작하기</span>
                 </a>
-              </li>
+              </li> */}
             </>
           )}
 

@@ -51,21 +51,17 @@ const MVPRequirementSession = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          // console.log(data);
+          console.log(data);
+
           const formattedRequirements = data.map(item => {
             return {
-              id: item[0],  // id
-              title: item[2],  // title
-              description: item[3],  // description
-              category: item[4],  // category
-              priority: item[5],  // priority
-              status: item[6],  // status
-              useCases: item[7],  // useCases (array)
-              constraints: item[8],  // constraints (array)
+              id: item.id,  // id
+              title: item.title,  // title
+              description: item.description,  // description
+              definition: item.definition
             };
           });
 
-          // Update the requirements state
           setRequirements(prevRequirements => [...prevRequirements, ...formattedRequirements]);
 
         } else {
@@ -104,7 +100,7 @@ const MVPRequirementSession = () => {
     setMessageInput('');
 
     setMessages([...messages, newMessage]);
-    const response = await fetch("http://localhost:5000/requestconversation", {
+    const response = await fetch("http://localhost:5000/RequestRequirements", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -127,8 +123,7 @@ const MVPRequirementSession = () => {
       category: data.category,
       priority: data.priority,
       status: 'draft',
-      useCases: data.useCases,
-      constraints: data.constraints
+      definition: data.definition,
     };
 
     // const suggestion = {
@@ -208,25 +203,11 @@ const MVPRequirementSession = () => {
 
                         <div className="space-y-4">
                           <div>
-                            <div className="text-sm font-medium mb-2">사용 사례:</div>
+                            <div className="text-sm font-medium mb-2">요구사항 정의:</div>
                             <div className="space-y-1">
-                              {message.suggestion.useCases.map((useCase, idx) => (
-                                <div key={idx} className="text-sm bg-white p-2 rounded">
-                                  {useCase}
-                                </div>
-                              ))}
+                              {message.suggestion.definition}
                             </div>
-                          </div>
 
-                          <div>
-                            <div className="text-sm font-medium mb-2">제약사항:</div>
-                            <div className="space-y-1">
-                              {message.suggestion.constraints.map((constraint, idx) => (
-                                <div key={idx} className="text-sm bg-white p-2 rounded">
-                                  {constraint}
-                                </div>
-                              ))}
-                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -276,23 +257,14 @@ const MVPRequirementSession = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Badge>{req.category}</Badge>
-                      <Badge className={
-                        req.priority === 'high' ? 'bg-red-100 text-red-700' :
-                          req.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-blue-100 text-blue-700'
-                      }>
-                        {req.priority}
-                      </Badge>
-                      <Badge variant="outline">{req.status}</Badge>
+                      <Badge>{req.title}</Badge>
+
                     </div>
                     <div className="flex items-center gap-2">
                       <button className="p-1.5 hover:bg-gray-100 rounded" onClick={() => saveRequirement(req)}>
                         <Save className="w-4 h-4 text-blue-500" />
                       </button>
-                      {/* <button className="p-1.5 hover:bg-gray-100 rounded">
-                        <Edit2 className="w-4 h-4 text-gray-500" />
-                      </button> */}
+                      
                       <button
                         onClick={() => setRequirements(requirements.filter(r => r.id !== req.id))}
                         className="p-1.5 hover:bg-red-100 rounded"
@@ -302,14 +274,13 @@ const MVPRequirementSession = () => {
                     </div>
                   </div>
 
-                  <h3 className="font-medium mb-2">{req.title}</h3>
                   <p className="text-sm text-gray-600 mb-4">{req.description}</p>
 
                   <div className="space-y-4">
                     <div>
                       <div className="text-sm font-medium mb-2">요구사항 정의:</div>
                       <div className="space-y-1">
-                        <textarea className="text-sm bg-white p-2 rounded border w-full" defaultValue={req.description}></textarea>
+                        <textarea className="text-sm bg-white p-2 rounded border w-full" defaultValue={req.definition}></textarea>
 
                       </div>
 

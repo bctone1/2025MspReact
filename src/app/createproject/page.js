@@ -1,6 +1,6 @@
 "use client";
 import Sidebar from "@/components/Sidebar"; // Header 임포트
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,7 +13,7 @@ import {
   MessageSquare,
   Sparkles
 } from "lucide-react";
-import { useSession} from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const MVPProjectCreation = () => {
   const { data: session } = useSession();
@@ -35,10 +35,10 @@ const MVPProjectCreation = () => {
     framework: "",
     team: [],
     llm: [],
-    useremail : ""
+    useremail: ""
   });
 
-  
+
 
   const techStacks = {
     JavaScript: ["React", "Vue.js", "Next.js"],
@@ -47,12 +47,38 @@ const MVPProjectCreation = () => {
     Java: ["Spring Boot", "Spring MVC"]
   };
 
-  const availableMembers = [
-    { id: 1, name: "김영희", role: "프로젝트 매니저", skills: ["기획", "관리"] },
-    { id: 2, name: "이철수", role: "시니어 개발자", skills: ["백엔드", "DevOps"] },
-    { id: 3, name: "박지민", role: "개발자", skills: ["프론트엔드", "UI/UX"] },
-    { id: 4, name: "정민수", role: "데이터 엔지니어", skills: ["AI/ML", "데이터"] }
-  ];
+  // const availableMembers = [
+  //   { id: 1, name: "김영희", role: "프로젝트 매니저", skills: ["기획", "관리"] },
+  //   { id: 2, name: "이철수", role: "시니어 개발자", skills: ["백엔드", "DevOps"] },
+  //   { id: 3, name: "박지민", role: "개발자", skills: ["프론트엔드", "UI/UX"] },
+  //   { id: 4, name: "정민수", role: "데이터 엔지니어", skills: ["AI/ML", "데이터"] }
+  // ];
+
+  
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/getmembers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setUsers(data);
+      } else {
+        console.error("사용자 데이터를 가져오는 데 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("서버와의 통신에 실패했습니다:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const availableLLMs = [
     {
@@ -98,7 +124,7 @@ const MVPProjectCreation = () => {
   };
   const newproject = async () => {
     console.log(projectInfo);
-    
+
     const now = new Date();
     const formattedDateTime = now.toISOString().slice(0, 19).replace(/[-:T]/g, '');
     const indexName = `msp${formattedDateTime}`;
@@ -108,12 +134,12 @@ const MVPProjectCreation = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ projectInfo: projectInfo, useremail : session.user.email}),
+      body: JSON.stringify({ projectInfo: projectInfo, useremail: session.user.email }),
     });
     const data = await response.json();
     if (response.ok) {
       alert(data.message);
-      // window.location.href = "/projectdetailnew"
+      window.location.href = "/projectdetailnew"
     } else {
       alert("프로젝트 생성 실패");
       console.error("프로젝트 생성 실패:", response.statusText);
@@ -192,6 +218,11 @@ const MVPProjectCreation = () => {
       return { ...prev, team: newTeam };
     });
   };
+
+  const [availableMembers, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const filteredUsers = availableMembers.filter((user) => user['name'].includes(search) || user['email'].includes(search));
+  
 
   const renderBasicInfo = () => (
     <div className="grid grid-cols-2 gap-6 h-[600px]">
@@ -295,6 +326,9 @@ const MVPProjectCreation = () => {
     </div>
   );
 
+  
+  
+
   const renderTechStack = () => (
     <div className="space-y-6">
       <div>
@@ -337,21 +371,21 @@ const MVPProjectCreation = () => {
     <div className="space-y-4">
       <h3 className="font-medium mb-3">팀원 구성</h3>
       <div className="mb-4">
-        <button
-          onClick={() => {
-            setProjectInfo(prev => ({
-              ...prev,
-              team: []
-            }));
-            handleNext();
-          }}
-          className="w-full p-3 border rounded text-center hover:bg-gray-50"
-        >
-          단독 프로젝트로 진행하기
-        </button>
+
+        {/* 검색 입력창 */}
+        <input
+          type="text"
+          placeholder="팀원 검색..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full p-2 border rounded mb-4"
+        />
+
       </div>
+
+
       <div className="space-y-2">
-        {availableMembers.map(member => (
+        {filteredUsers.map(member => (
           <div
             key={member.id}
             className="flex items-center justify-between p-4 border rounded hover:bg-gray-50 cursor-pointer"
@@ -375,6 +409,19 @@ const MVPProjectCreation = () => {
             </div>
           </div>
         ))}
+
+        <button
+          onClick={() => {
+            setProjectInfo(prev => ({
+              ...prev,
+              team: []
+            }));
+            handleNext();
+          }}
+          className="w-full p-3 border rounded text-center hover:bg-gray-50"
+        >
+          단독 프로젝트로 진행하기
+        </button>
       </div>
       {projectInfo.team.length > 0 && (
         <button

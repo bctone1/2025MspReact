@@ -6,16 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Bot, MessageSquare, Save, Edit2, Trash2, FileText, Plus } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-const usersData = [
-  { id: 1, name: "김철수", email: "chulsoo@example.com", role: "admin", status: "승인", group: "비씨티원" },
-  { id: 2, name: "이영희", email: "younghee@example.com", role: "user", status: "대기", group: "비씨티원" },
-  { id: 3, name: "박민수", email: "minsoo@example.com", role: "user", status: "승인", group: "비씨티원" },
-];
+
 
 const AccountSession = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
+
+  const filteredUsers = users.filter((user) => user['name'].includes(search) || user['email'].includes(search));
 
   
 
@@ -45,7 +43,7 @@ const AccountSession = () => {
 
 
 
-  const filteredUsers = users.filter((user) => user[5].includes(search) || user[2].includes(search));
+  
 
   // 수정 버튼 클릭 시 실행 (모달 열기)
   const handleEditClick = (user) => {
@@ -65,7 +63,7 @@ const AccountSession = () => {
 
   // 삭제 버튼 클릭 시 실행
   const handleDelete = (userId) => {
-    setUsers(users.filter((user) => user.id !== userId));
+    setUsers(users.filter((user) => user['id'] !== userId));
   };
 
   return (
@@ -103,16 +101,16 @@ const AccountSession = () => {
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user[0]} className="border-b">
-                  <td className="p-2">{user[5]}</td>
-                  <td className="p-2">{user[2]}</td>
-                  <td className="p-2">{user[4]}</td>
+                <tr key={user['id']} className="border-b">
+                  <td className="p-2">{user['name']}</td>
+                  <td className="p-2">{user['email']}</td>
+                  <td className="p-2">{user['group']}</td>
                   <td className="p-2">
-                    <Badge className="bg-blue-500 text-white">{user[3]}</Badge>
+                    <Badge className="bg-blue-500 text-white">{user['role']}</Badge>
                   </td>
                   <td className="p-2">
-                    <Badge className={user[6] === "승인" ? "bg-green-500" : "bg-red-500"}>
-                      {user[6]}
+                    <Badge className={user['status'] === "승인" ? "bg-green-500" : "bg-red-500"}>
+                      {user['status']}
                     </Badge>
                   </td>
                   <td className="p-2 flex gap-2">
@@ -124,7 +122,7 @@ const AccountSession = () => {
                     </button>
                     <button
                       className="p-2 bg-red-500 text-white rounded"
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDelete(user['id'])}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -145,7 +143,7 @@ const AccountSession = () => {
               <input
                 type="text"
                 name="name"
-                value={selectedUser[5]}
+                value={selectedUser['name']}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mb-4"
               />
@@ -154,7 +152,7 @@ const AccountSession = () => {
               <input
                 type="text"
                 name="email"
-                value={selectedUser[2]}
+                value={selectedUser['email']}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mb-4"
               />
@@ -163,7 +161,7 @@ const AccountSession = () => {
               <input
                 type="text"
                 name="email"
-                value={selectedUser[4]}
+                value={selectedUser['group']}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mb-4"
               />
@@ -171,7 +169,7 @@ const AccountSession = () => {
               <label className="block mb-2">역할</label>
               <select
                 name="role"
-                value={selectedUser[3]}
+                value={selectedUser['role']}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mb-4"
               >
@@ -182,7 +180,7 @@ const AccountSession = () => {
               <label className="block mb-2">상태</label>
               <select
                 name="status"
-                value={selectedUser.status}
+                value={selectedUser['status']}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mb-4"
               >
