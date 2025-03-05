@@ -20,17 +20,17 @@ export default function Dashboard() {
     useEffect(() => {
         if (status !== "authenticated") return;
         if (session?.user?.email) {
-            fetchProjects(session.user.email,session.user.role);
+            fetchProjects(session.user.email, session.user.role);
         }
     }, [session, status]);
 
-    const fetchProjects = async (email,role) => {
+    const fetchProjects = async (email, role) => {
         const response = await fetch("http://localhost:5000/projectsList", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email: email, role:role }),
+            body: JSON.stringify({ email: email, role: role }),
         });
         const data = await response.json();
         if (response.ok) {
@@ -75,7 +75,7 @@ export default function Dashboard() {
 
         });
         const data = await response.json();
-        const botMessage = { sender: "bot", text: data};
+        const botMessage = { sender: "bot", text: data };
         setMessages((prev) => [...prev, botMessage]);
     };
 
@@ -89,15 +89,12 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen flex bg-gray-100">
             {/* Sidebar */}
-            <div className="w-64 bg-gray-900 text-white">
-                <Sidebar />
-            </div>
+            <Sidebar />
+
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col p-6">
-                <header className="mb-6">
-                    <h1 className="text-xl font-bold">Admin Dashboard</h1>
-                </header>
+
 
                 <div className="flex flex-col items-center justify-center flex-grow w-full">
                     {!isChatActive ? (

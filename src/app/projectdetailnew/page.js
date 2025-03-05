@@ -136,7 +136,7 @@ const ProjectDetailDashboard = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-100">
-      <div className="w-64 bg-gray-900 text-white"><Sidebar /></div>
+      <Sidebar/>
       <div className="flex-1 p-6">
         {/* Header */}
         <div className="bg-white border-b px-6 py-4">

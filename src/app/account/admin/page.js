@@ -69,7 +69,7 @@ const AccountSession = () => {
   return (
     <div className="h-screen flex">
       {/* 사이드바 */}
-      <div className="w-64 bg-gray-900 text-white">
+      <div className="min-w-[200px] max-w-[300px] bg-gray-800 text-white">
         <Sidebar />
       </div>
 

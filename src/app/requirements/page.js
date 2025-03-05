@@ -157,9 +157,9 @@ const MVPRequirementSession = () => {
 
   return (
     <div className="h-screen bg-gray-100 flex">
-      <div className="w-64 bg-gray-900 text-white"><Sidebar /></div>
+      <Sidebar/>
       {/* Left Panel - Chat Interface */}
-      <div className="w-1/2 flex flex-col border-r bg-white">
+      <div className="flex-1 flex flex-col border-r bg-white">
         <div className="p-4 border-b">
           <h2 className="font-medium">새 요구사항 분석</h2>
           <p className="text-sm text-gray-500">LLM과 대화하며 요구사항을 도출합니다.</p>
@@ -240,7 +240,7 @@ const MVPRequirementSession = () => {
       </div>
 
       {/* Right Panel - Requirements List */}
-      <div className="w-1/2 flex flex-col bg-gray-50">
+      <div className="flex-1 flex flex-col bg-gray-50">
         <div className="p-4 border-b bg-white">
           <div className="flex items-center justify-between">
             <div>

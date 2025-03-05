@@ -30,7 +30,7 @@ export default function Register() {
     const handleEmailVerification = async () => {
         try {
             const code = generateSecretCode();
-            setSecretCode(code); // 저장된 secretCode 상태 업데이트
+            setSecretCode(code);
 
             const response = await axios.post('http://localhost:5000/sendEmail', {
                 email: formData.email,

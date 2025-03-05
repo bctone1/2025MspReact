@@ -58,7 +58,8 @@ export default function LoginPage({ className }) {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <a href="#" className="flex items-center gap-2 self-center font-large">BEGIN</a>
+        <CardTitle className="flex items-center gap-2 self-center font-large">META LLM MSP</CardTitle>
+        {/* <a href="#" className="flex items-center gap-2 self-center font-large">META LLM MSP</a> */}
 
         <div className={cn("flex flex-col gap-6", className)}>
           <Card>
@@ -135,9 +136,13 @@ export default function LoginPage({ className }) {
                 </div>
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
-                  <a className="underline underline-offset-4" onClick={handleSignup}>
+                  <a
+                    className="underline underline-offset-4 cursor-pointer"
+                    onClick={handleSignup}
+                  >
                     Sign up
                   </a>
+
                 </div>
               </div>
 

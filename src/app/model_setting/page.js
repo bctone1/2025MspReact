@@ -1,7 +1,7 @@
 "use client";
 
 import Sidebar from "@/components/Sidebar";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Card,
@@ -68,6 +68,9 @@ import {
 } from 'lucide-react';
 
 // 초기 데이터 (실제로는 API에서 가져올 것)
+
+// const [Providers, setProviders] = useState([]);
+
 const initialProviders = [
   {
     id: 'openai',
@@ -163,7 +166,32 @@ const initialApiKeys = [
 ];
 
 const LLMProviderKeyManager = () => {
-  const [providers, setProviders] = useState(initialProviders);
+  const [providers, setProviders] = useState([]);
+
+  useEffect(() => {
+    fetchProvider();
+  }, []); // 빈 배열을 넣으면, 컴포넌트가 처음 렌더링될 때만 실행됩니다.
+
+  const fetchProvider = async () => {
+    const response = await fetch("http://localhost:5000/providerList", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    if (response.ok) {
+      console.log(data);
+      setProviders(data);
+    } else {
+      alert("오류발생");
+    }
+  };
+
+
+
+
+
   const [apiKeys, setApiKeys] = useState(initialApiKeys);
   const [activeTab, setActiveTab] = useState('providers');
   const [searchQuery, setSearchQuery] = useState('');
@@ -430,10 +458,8 @@ const LLMProviderKeyManager = () => {
   return (
 
     <div className="flex">
-      <div className="w-64 bg-gray-900 text-white"><Sidebar /></div>
+      <Sidebar />
       <div className="container mx-auto py-6">
-
-
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">LLM 공급자 및 API 키 관리</h1>
         </div>
@@ -683,7 +709,7 @@ const LLMProviderKeyManager = () => {
                               <div className="w-full bg-gray-200 rounded-full h-1.5">
                                 <div
                                   className={`h-1.5 rounded-full ${usagePercentage > 90 ? 'bg-red-500' :
-                                      usagePercentage > 75 ? 'bg-amber-500' : 'bg-blue-500'
+                                    usagePercentage > 75 ? 'bg-amber-500' : 'bg-blue-500'
                                     }`}
                                   style={{ width: `${Math.min(usagePercentage, 100)}%` }}
                                 ></div>
@@ -751,7 +777,7 @@ const LLMProviderKeyManager = () => {
         </div>
 
         {/* API 사용량 요약 및 통계 섹션 (탭 아래에 추가) */}
-        <div className="mt-8 border rounded-lg shadow-sm bg-white p-6">
+        {/* <div className="mt-8 border rounded-lg shadow-sm bg-white p-6">
           <h2 className="text-lg font-semibold mb-4">API 사용량 요약</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
@@ -803,7 +829,7 @@ const LLMProviderKeyManager = () => {
             </Card>
           </div>
 
-          {/* 공급자별 사용량 차트 (실제로는 차트 라이브러리 사용) */}
+          
           <div className="mt-8">
             <h3 className="text-md font-medium mb-4">공급자별 사용량</h3>
             <div className="border rounded-lg p-4">
@@ -841,10 +867,10 @@ const LLMProviderKeyManager = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* 보안 및 설정 섹션 */}
-        <div className="mt-8 border rounded-lg shadow-sm bg-white p-6">
+        {/* <div className="mt-8 border rounded-lg shadow-sm bg-white p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">API 키 보안 및 설정</h2>
             <Button variant="outline" size="sm">
@@ -927,7 +953,9 @@ const LLMProviderKeyManager = () => {
               </Card>
             </div>
           </div>
-        </div>
+        </div> */}
+
+
       </div>
     </div>
 

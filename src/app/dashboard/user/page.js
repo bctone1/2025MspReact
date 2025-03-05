@@ -44,7 +44,7 @@ export default function Dashboard (){
   return (
     <div className="min-h-screen flex bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-900 text-white"><Sidebar /></div>
+      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 p-6">

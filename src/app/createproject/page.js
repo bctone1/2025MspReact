@@ -153,7 +153,7 @@ const MVPProjectCreation = () => {
 
   const handleSendMessage = async () => {
     // alert(messageInput);
-    const response = await fetch("http://localhost:5000/setproject", {
+    const response = await fetch("http://localhost:5000/setproject",{
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -28,9 +28,7 @@ const AccountSession = () => {
   return (
     <div className="h-screen bg-gray-100 flex">
       {/* 사이드바 */}
-      <div className="w-64 bg-gray-900 text-white">
-        <Sidebar />
-      </div>
+      <Sidebar />
 
       {/* 계정 정보 섹션 */}
       <div className="flex-1 flex justify-center items-center p-6">
