@@ -67,132 +67,106 @@ import {
   Settings
 } from 'lucide-react';
 
-// 초기 데이터 (실제로는 API에서 가져올 것)
 
-// const [Providers, setProviders] = useState([]);
-
-const initialProviders = [
-  {
-    id: 'openai',
-    name: 'OpenAI',
-    status: 'active',
-    modelsCount: 4,
-    keysCount: 2,
-    website: 'https://openai.com',
-    description: 'OpenAI의 GPT 모델들을 위한 API 서비스'
-  },
-  {
-    id: 'anthropic',
-    name: 'Anthropic',
-    status: 'active',
-    modelsCount: 2,
-    keysCount: 1,
-    website: 'https://anthropic.com',
-    description: 'Anthropic Claude 시리즈 모델들을 위한 API 서비스'
-  },
-  {
-    id: 'cohere',
-    name: 'Cohere',
-    status: 'inactive',
-    modelsCount: 1,
-    keysCount: 0,
-    website: 'https://cohere.ai',
-    description: 'Cohere의 자연어 처리 모델들을 위한 API 서비스'
-  },
-  {
-    id: 'mistral',
-    name: 'Mistral AI',
-    status: 'active',
-    modelsCount: 3,
-    keysCount: 1,
-    website: 'https://mistral.ai',
-    description: 'Mistral의 강력한 LLM을 위한 API 서비스'
-  }
-];
-
-const initialApiKeys = [
-  {
-    id: 'key-1',
-    providerId: 'openai',
-    name: '프로덕션 키',
-    key: 'sk-openai-prod-xxxxxxxxxxxxxxxxxxxxxx',
-    createdAt: '2024-01-15T10:30:00Z',
-    expiresAt: '2025-01-15T10:30:00Z',
-    lastUsed: '2024-02-27T11:45:22Z',
-    status: 'active',
-    environment: 'production',
-    usageLimit: 1000000,
-    usageCount: 450289
-  },
-  {
-    id: 'key-2',
-    providerId: 'openai',
-    name: '개발 환경 키',
-    key: 'sk-openai-dev-xxxxxxxxxxxxxxxxxxxxxx',
-    createdAt: '2024-01-20T14:45:00Z',
-    expiresAt: '2025-01-20T14:45:00Z',
-    lastUsed: '2024-02-28T09:12:33Z',
-    status: 'active',
-    environment: 'development',
-    usageLimit: 500000,
-    usageCount: 124567
-  },
-  {
-    id: 'key-3',
-    providerId: 'anthropic',
-    name: '기본 키',
-    key: 'sk-ant-xxxxxxxxxxxxxxxxxxxxxx',
-    createdAt: '2024-02-05T09:15:00Z',
-    expiresAt: '2025-02-05T09:15:00Z',
-    lastUsed: '2024-02-28T15:30:45Z',
-    status: 'active',
-    environment: 'production',
-    usageLimit: 750000,
-    usageCount: 325890
-  },
-  {
-    id: 'key-4',
-    providerId: 'mistral',
-    name: '테스트 키',
-    key: 'sk-mistral-xxxxxxxxxxxxxxxxxxxxxx',
-    createdAt: '2024-02-10T16:20:00Z',
-    expiresAt: '2025-02-10T16:20:00Z',
-    lastUsed: '2024-02-26T19:05:12Z',
-    status: 'active',
-    environment: 'testing',
-    usageLimit: 300000,
-    usageCount: 56789
-  },
-];
+// const initialApiKeys = [
+//   {
+//     id: '1',
+//     providerId: 'openai',
+//     name: '프로덕션 키',
+//     key: 'sk-openai-prod-xxxxxxxxxxxxxxxxxxxxxx',
+//     createdAt: '2024-01-15T10:30:00Z',
+//     expiresAt: '2025-01-15T10:30:00Z',
+//     status: 'active',
+//     environment: 'production',
+//     usageLimit: 1000000,
+//     usageCount: 450289
+//   },
+//   {
+//     id: '2',
+//     providerId: 'openai',
+//     name: '개발 환경 키',
+//     key: 'sk-openai-dev-xxxxxxxxxxxxxxxxxxxxxx',
+//     createdAt: '2024-01-20T14:45:00Z',
+//     expiresAt: '2025-01-20T14:45:00Z',
+//     status: 'active',
+//     environment: 'development',
+//     usageLimit: 500000,
+//     usageCount: 124567
+//   },
+//   {
+//     id: '3',
+//     providerId: 'anthropic',
+//     name: '기본 키',
+//     key: 'sk-ant-xxxxxxxxxxxxxxxxxxxxxx',
+//     createdAt: '2024-02-05T09:15:00Z',
+//     expiresAt: '2025-02-05T09:15:00Z',
+//     status: 'active',
+//     environment: 'production',
+//     usageLimit: 750000,
+//     usageCount: 325890
+//   },
+//   {
+//     id: '4',
+//     providerId: 'mistral',
+//     name: '테스트 키',
+//     key: 'sk-mistral-xxxxxxxxxxxxxxxxxxxxxx',
+//     createdAt: '2024-02-10T16:20:00Z',
+//     expiresAt: '2025-02-10T16:20:00Z',
+//     status: 'active',
+//     environment: 'testing',
+//     usageLimit: 300000,
+//     usageCount: 56789
+//   },
+// ];
 
 const LLMProviderKeyManager = () => {
   const [providers, setProviders] = useState([]);
+  const [apiKeys, setApiKeys] = useState([]);
 
   useEffect(() => {
+    const fetchProvider = async () => {
+      const response = await fetch("http://localhost:5000/providerList", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data);
+        setProviders(data);
+      } else {
+        alert("오류발생");
+      }
+    };
+
+    const fetchAPIKey = async () => {
+      const response = await fetch("http://localhost:5000/APIkeyList", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data);
+        setApiKeys(data);
+      } else {
+        alert("오류발생");
+      }
+    };
+
     fetchProvider();
-  }, []); // 빈 배열을 넣으면, 컴포넌트가 처음 렌더링될 때만 실행됩니다.
-
-  const fetchProvider = async () => {
-    const response = await fetch("http://localhost:5000/providerList", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (response.ok) {
-      console.log(data);
-      setProviders(data);
-    } else {
-      alert("오류발생");
-    }
-  };
+    fetchAPIKey();
+  }, []);
 
 
 
 
 
-  const [apiKeys, setApiKeys] = useState(initialApiKeys);
+
+
+
   const [activeTab, setActiveTab] = useState('providers');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -224,6 +198,7 @@ const LLMProviderKeyManager = () => {
       (provider && provider.name.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   });
+  // console.log(filteredApiKeys);
 
   // API 키 복사 함수
   const copyToClipboard = (text) => {
@@ -413,6 +388,14 @@ const LLMProviderKeyManager = () => {
     );
   };
 
+
+
+
+
+
+
+
+
   // 포매팅 함수
   const formatDate = (dateString) => {
     if (!dateString) return '-';
@@ -424,27 +407,6 @@ const LLMProviderKeyManager = () => {
     }).format(date);
   };
 
-  const formatRelativeTime = (dateString) => {
-    if (!dateString) return '-';
-
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now - date) / 1000);
-
-    if (diffInSeconds < 60) return '방금 전';
-
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
-
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}시간 전`;
-
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 30) return `${diffInDays}일 전`;
-
-    return formatDate(dateString);
-  };
-
   // 사용량 계산 및 포매팅
   const getUsagePercentage = (used, limit) => {
     return (used / limit) * 100;
@@ -454,9 +416,7 @@ const LLMProviderKeyManager = () => {
     return new Intl.NumberFormat('ko-KR').format(num);
   };
 
-  // UI 렌더링
   return (
-
     <div className="flex">
       <Sidebar />
       <div className="container mx-auto py-6">
@@ -587,13 +547,13 @@ const LLMProviderKeyManager = () => {
 
                       <CardContent>
                         <div className="grid grid-cols-2 gap-2 text-sm">
-                          <div className="flex flex-col">
+                          {/* <div className="flex flex-col">
                             <span className="text-gray-500">모델</span>
                             <span className="font-medium">{provider.modelsCount}개</span>
-                          </div>
+                          </div> */}
                           <div className="flex flex-col">
                             <span className="text-gray-500">API 키</span>
-                            <span className="font-medium">{provider.keysCount}개</span>
+                            <span className="font-medium">{provider.keys_count}개</span>
                           </div>
                         </div>
                       </CardContent>
@@ -654,18 +614,18 @@ const LLMProviderKeyManager = () => {
                       <TableHead>사용량</TableHead>
                       <TableHead>생성일</TableHead>
                       <TableHead>만료일</TableHead>
-                      <TableHead>마지막 사용</TableHead>
+
                       <TableHead className="text-right">관리</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredApiKeys.map(key => {
-                      const provider = providers.find(p => p.id === key.providerId);
-                      const usagePercentage = getUsagePercentage(key.usageCount, key.usageLimit);
+                      // const provider = providers.find(p => p.id === key.provider_id);
+                      const usagePercentage = getUsagePercentage(key.usage_count, key.usage_limit);
                       return (
                         <TableRow key={key.id}>
                           <TableCell className="font-medium">{key.name}</TableCell>
-                          <TableCell>{provider?.name || '알 수 없음'}</TableCell>
+                          <TableCell>{key.provider_id}</TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-2">
                               <code className="bg-gray-100 rounded px-2 py-1 text-xs">
@@ -701,7 +661,7 @@ const LLMProviderKeyManager = () => {
                           <TableCell>
                             <div className="flex flex-col gap-1">
                               <div className="flex items-center text-xs">
-                                <span>{formatNumber(key.usageCount)} / {formatNumber(key.usageLimit)}</span>
+                                <span>{formatNumber(key.usage_count)} / {formatNumber(key.usage_limit)}</span>
                                 <span className="ml-auto text-gray-500">
                                   {usagePercentage.toFixed(1)}%
                                 </span>
@@ -716,14 +676,9 @@ const LLMProviderKeyManager = () => {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="text-xs">{formatDate(key.createdAt)}</TableCell>
-                          <TableCell className="text-xs">{formatDate(key.expiresAt)}</TableCell>
-                          <TableCell className="text-xs">
-                            <span className="flex items-center gap-1">
-                              <Clock size={12} />
-                              {formatRelativeTime(key.lastUsed)}
-                            </span>
-                          </TableCell>
+                          <TableCell className="text-xs">{formatDate(key.created_at)}</TableCell>
+                          <TableCell className="text-xs">{formatDate(key.expires_at)}</TableCell>
+
                           <TableCell className="text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
