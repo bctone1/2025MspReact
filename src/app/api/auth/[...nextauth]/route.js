@@ -49,7 +49,7 @@ export const handler = NextAuth({
       if (account.provider === "google") {
         try {
           // Google 로그인 성공 후 백엔드로 사용자 정보 전송
-          await axios.post("http://127.0.0.1:5000/login", {
+          await axios.post("http://127.0.0.1:5000/googlelogin", {
           // await axios.post("http://bctone.ddns.net:5000/login", {
             email: user.email,
             name: user.name,

@@ -34,8 +34,8 @@ export default function Register() {
 
             const response = await axios.post('http://localhost:5000/sendEmail', {
                 email: formData.email,
-                secretCode: code,
-                // secretCode: code.toString(),
+                // secretCode: code,
+                secretCode: code.toString(),
             });
 
             if (response.status === 200) {
