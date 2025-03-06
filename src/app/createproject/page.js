@@ -34,7 +34,7 @@ const MVPProjectCreation = () => {
     language: "",
     framework: "",
     team: [],
-    llm: [],
+    llm: "",
     useremail: ""
   });
 
@@ -54,7 +54,7 @@ const MVPProjectCreation = () => {
   //   { id: 4, name: "정민수", role: "데이터 엔지니어", skills: ["AI/ML", "데이터"] }
   // ];
 
-  
+
 
   const fetchUsers = async () => {
     try {
@@ -64,6 +64,7 @@ const MVPProjectCreation = () => {
           "Content-Type": "application/json",
         },
       });
+
       if (response.ok) {
         const data = await response.json();
         console.log(data);
@@ -138,8 +139,8 @@ const MVPProjectCreation = () => {
     });
     const data = await response.json();
     if (response.ok) {
-      alert(data.message);
-      window.location.href = "/projectdetailnew"
+      alert("생성되었습니다.");
+      window.location.href = "/project"
     } else {
       alert("프로젝트 생성 실패");
       console.error("프로젝트 생성 실패:", response.statusText);
@@ -153,7 +154,18 @@ const MVPProjectCreation = () => {
 
   const handleSendMessage = async () => {
     // alert(messageInput);
-    const response = await fetch("http://localhost:5000/setproject",{
+    setMessageInput("");
+    if (!messageInput.trim()) return;
+
+    const newMessage = {
+      id: messages.length + 1,
+      role: "user",
+      content: messageInput
+    };
+
+    setMessages([...messages, newMessage]);
+
+    const response = await fetch("http://localhost:5000/setproject", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -164,35 +176,14 @@ const MVPProjectCreation = () => {
     const data = await response.json();
     if (response.ok) {
       console.log(data);
-
-      // const aiResponse = {
-      //   id: messages.length + 2,
-      //   role: "assistant",
-      //   content: "프로젝트 내용을 분석했습니다. 다음과 같이 정리해보았습니다:",
-      //   suggestion: {
-      //     name: data.projectname,
-      //     description: data.description,
-      //     purpose: data.purpose
-      //   }
-      // };
-      // setMessages(prev => [...prev, aiResponse]);
-      // alert(data.message);
     } else {
       alert(data.message);
     }
 
 
 
-    if (!messageInput.trim()) return;
 
-    const newMessage = {
-      id: messages.length + 1,
-      role: "user",
-      content: messageInput
-    };
 
-    setMessages([...messages, newMessage]);
-    setMessageInput("");
 
     setTimeout(() => {
       const aiResponse = {
@@ -222,7 +213,7 @@ const MVPProjectCreation = () => {
   const [availableMembers, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const filteredUsers = availableMembers.filter((user) => user['name'].includes(search) || user['email'].includes(search));
-  
+
 
   const renderBasicInfo = () => (
     <div className="grid grid-cols-2 gap-6 h-[600px]">
@@ -326,8 +317,8 @@ const MVPProjectCreation = () => {
     </div>
   );
 
-  
-  
+
+
 
   const renderTechStack = () => (
     <div className="space-y-6">
@@ -394,11 +385,15 @@ const MVPProjectCreation = () => {
             <div>
               <div className="font-medium">{member.name}</div>
               <div className="text-sm text-gray-500">{member.role}</div>
+
               <div className="flex gap-2 mt-1">
-                {member.skills.map(skill => (
+                {/* member.skills가 null 또는 undefined일 경우 빈 배열로 처리 */}
+                {(member.skills || []).map(skill => (
                   <Badge key={skill} variant="secondary">{skill}</Badge>
                 ))}
               </div>
+
+
             </div>
             <div className="flex items-center gap-3">
               {projectInfo.team.some(m => m.id === member.id) ? (
@@ -523,11 +518,21 @@ const MVPProjectCreation = () => {
                     <div className="font-medium">{member.name}</div>
                     <div className="text-sm text-gray-500">{member.role}</div>
                   </div>
-                  <div className="flex gap-2">
-                    {member.skills.map(skill => (
+
+                  <div className="flex gap-2 mt-1">
+                    {/* member.skills가 null 또는 undefined일 경우 빈 배열로 처리 */}
+                    {(member.skills || []).map(skill => (
                       <Badge key={skill} variant="secondary">{skill}</Badge>
                     ))}
                   </div>
+
+                  {/* <div className="flex gap-2">
+                    {member.skills.map(skill => (
+                      <Badge key={skill} variant="secondary">{skill}</Badge>
+                    ))}
+                  </div> */}
+
+
                 </div>
               ))}
             </div>

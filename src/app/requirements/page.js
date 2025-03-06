@@ -53,9 +53,9 @@ const MVPRequirementSession = () => {
           const data = await response.json();
           console.log(data);
 
-          const formattedRequirements = data.map(item => {
+          const formattedRequirements = data.map((item,index) => {
             return {
-              id: item.id,  // id
+              id: index,  // id
               title: item.title,  // title
               description: item.description,  // description
               definition: item.definition

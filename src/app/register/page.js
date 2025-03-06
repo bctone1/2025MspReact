@@ -64,15 +64,15 @@ export default function Register() {
             return;
         }
 
-        if (!emailVerified) {
-            alert('Please verify your email.');
-            return;
-        }
+        // if (!emailVerified) {
+        //     alert('Please verify your email.');
+        //     return;
+        // }
 
-        if (emailCode !== secretCode.toString()) {
-            alert('Invalid email verification code.');
-            return;
-        }
+        // if (emailCode !== secretCode.toString()) {
+        //     alert('Invalid email verification code.');
+        //     return;
+        // }
 
         // 이메일 코드가 맞다면 /register API로 POST 요청
         try {

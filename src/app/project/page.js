@@ -29,7 +29,8 @@ const Project = () => {
       console.log(data);
       setProjects(data);
     } else {
-      alert("오류발생");
+      console.log(data);
+      // alert("오류발생");
     }
   };
 
@@ -182,15 +183,19 @@ const Project = () => {
                 <p>
                   <span className="font-semibold">시작일:</span> {project['start_date']}
                 </p>
-                <p>
+                {/* <p>
                   <span className="font-semibold">종료일:</span> {project['end_date']}
-                </p>
+                </p> */}
                 <p>
                   <span className="font-semibold">팀원:</span> {project['num_of_member_']}명
                 </p>
                 <p>
                   <span className="font-semibold">도구:</span> {project['requirements']}
                 </p>
+                <p>
+                  <span className="font-semibold">LLM:</span> {String(project['model_setting']).replace(/[{}]/g, '')}
+                </p>
+
               </div>
               <button onClick={() => window.location.href = '/projectdetailnew?project_id=' + project['project_id'] + '&user_email=' + session.user.email} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
                 자세히 보기

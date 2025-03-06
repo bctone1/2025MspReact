@@ -149,7 +149,7 @@ const ProjectDetailDashboard = () => {
           </div>
 
           <div className="text-sm text-gray-500">
-            {project.startDate} ~ {project.endDate}
+            {project.startDate} ~ 
           </div>
 
           {/* Phase Navigation */}
