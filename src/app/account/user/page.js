@@ -1,7 +1,11 @@
 "use client";
-import Sidebar from "@/components/Sidebar";
-import React, { useState } from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import Sidebar from "@/components/Sidebar";
 
 const AccountSession = () => {
   const [user, setUser] = useState({
@@ -9,129 +13,93 @@ const AccountSession = () => {
     name: "홍길동",
     email: "user@example.com",
     password: "12345",
-    role: "user", // "admin"일 경우 관리자 요청 버튼 X
+    role: "user",
+    skill: "React,Node.js,MongoDB",
+    group: "개발팀",
   });
 
-  const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState(user);
+  const [apiKey, setApiKey] = useState({
+    googleApiKey: "",
+    claudeApiKey: "",
+    openaiApiKey: ""
+  });
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setUser(formData);
-    setEditMode(false);
+  const handleApiChange = (e) => {
+    const { name, value } = e.target;
+    setApiKey((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
-    <div className="h-screen bg-gray-100 flex">
-      {/* 사이드바 */}
+    <div className="h-screen flex">
       <Sidebar />
-
-      {/* 계정 정보 섹션 */}
-      <div className="flex-1 flex justify-center items-center p-6">
-        <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-lg">
-          <h2 className="text-2xl font-semibold text-center mb-6">계정 정보</h2>
-
-          {/* ID 필드 */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">ID</label>
-            <p className="text-gray-800">{user.id}</p>
-          </div>
-
-          {/* 이름 필드 */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">이름</label>
-            {editMode ? (
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            ) : (
-              <p className="text-gray-800">{user.name}</p>
-            )}
-          </div>
-
-          {/* 이메일 필드 */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">이메일</label>
-            {editMode ? (
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            ) : (
-              <p className="text-gray-800">{user.email}</p>
-            )}
-          </div>
-
-          {/* 비밀번호 필드 */}
-          <div className="mb-4 relative">
-            <label className="block text-gray-700 text-sm font-bold mb-2">비밀번호</label>
-            {editMode ? (
-              <input
-                // type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            ) : (
-              <div className="flex items-center">
-                <p className="text-gray-800 mr-2">{showPassword ? user.password : "*****"}</p>
-                <button onClick={() => setShowPassword(!showPassword)}>
-                  {showPassword ? (
-                    <EyeSlashIcon className="w-5 h-5 text-gray-500" />
-                  ) : (
-                    <EyeIcon className="w-5 h-5 text-gray-500" />
-                  )}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* 역할 필드 */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">역할</label>
-            <p className="text-gray-800">{user.role}</p>
-          </div>
-
-          {/* 버튼 그룹 */}
-          <div className="flex justify-between items-center">
-            {editMode ? (
-              <>
-                <button
-                  onClick={() => setEditMode(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                  저장
-                </button>
-              </>
-            ) : (
+      <div className="flex-1 p-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>사용자 정보 수정</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>이름</Label>
+              <Input name="name" value={user.name} onChange={handleChange} />
+            </div>
+            <div>
+              <Label>이메일</Label>
+              <Input name="email" type="email" value={user.email} onChange={handleChange} />
+            </div>
+            <div className="relative">
+              <Label>비밀번호</Label>
+              <Input name="password" type={showPassword ? "text" : "password"} value={user.password} onChange={handleChange} />
               <button
-                onClick={() => setEditMode(true)}
-                className="bg-gray-500 text-white px-4 py-2 rounded w-full"
+                type="button"
+                className="absolute right-2 top-10 text-gray-500"
+                onClick={togglePasswordVisibility}
               >
-                수정
+                {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
               </button>
-            )}
+            </div>
+            <div>
+              <Label>스킬</Label>
+              <Input name="skill" value={user.skill} onChange={handleChange} />
+            </div>
+            <div>
+              <Label>그룹</Label>
+              <Input name="group" value={user.group} onChange={handleChange} />
+            </div>
+          </CardContent>
+        </Card>
 
-          </div>
-        </div>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>API 키 관리</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Google API Key</Label>
+              <Input name="googleApiKey" value={apiKey.googleApiKey} onChange={handleApiChange} />
+            </div>
+            <div>
+              <Label>Claude API Key</Label>
+              <Input name="claudeApiKey" value={apiKey.claudeApiKey} onChange={handleApiChange} />
+            </div>
+            <div>
+              <Label>OpenAI API Key</Label>
+              <Input name="openaiApiKey" value={apiKey.openaiApiKey} onChange={handleApiChange} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Button className="mt-6 w-full">저장</Button>
       </div>
     </div>
   );

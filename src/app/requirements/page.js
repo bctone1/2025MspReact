@@ -18,7 +18,7 @@ const MVPRequirementSession = () => {
     console.log(req);
     console.log(project_id);
 
-    const response = await fetch("http://localhost:5000/saveRequirement", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saveRequirement`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +42,7 @@ const MVPRequirementSession = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/requirementsList", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requirementsList`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -100,7 +100,7 @@ const MVPRequirementSession = () => {
     setMessageInput('');
 
     setMessages([...messages, newMessage]);
-    const response = await fetch("http://localhost:5000/RequestRequirements", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/RequestRequirements`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

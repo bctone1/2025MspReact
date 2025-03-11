@@ -33,8 +33,6 @@ export default function LoginPage({ className }) {
       email,
       password,
     });
-
-
     if (result?.error) {
       alert("회원정보가 없습니다.");
       // alert("Login failed: " + result.error);

@@ -37,7 +37,7 @@ export default function Register() {
         try {
             const code = Math.floor(100000 + Math.random() * 900000).toString();
             setSecretCode(code);
-            const response = await axios.post('http://localhost:5000/sendEmail', {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/sendEmail`, {
                 email: formData.email,
                 secretCode: code,
             });
@@ -71,7 +71,7 @@ export default function Register() {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:5000/register', formData);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/register`, formData);
             if (response.status === 200) {
                 alert('Registration successful!');
                 router.push("/login");

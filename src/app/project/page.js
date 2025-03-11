@@ -17,13 +17,14 @@ const Project = () => {
   }, [session, status]); // session과 status가 변경될 때 실행
 
   const fetchProjects = async (email) => {
-    const response = await fetch("http://localhost:5000/projectsList", {
+    const response = await fetch("${process.env.NEXT_PUBLIC_API_URL}/projectsList", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email: email }),
     });
+    // console.log(response);
     const data = await response.json();
     if (response.ok) {
       console.log(data);
@@ -54,56 +55,6 @@ const Project = () => {
   // 페이지 변경 핸들러
   const handlePageChange = (page) => {
     setCurrentPage(page);
-  };
-
-  const [showModal, setShowModal] = useState(false); // 모달 상태 관리
-  const [currentStep, setCurrentStep] = useState(1);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    team: "",
-    llmSettings: "",
-  });
-
-  // 폼 입력 핸들러
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // 단계 전환 핸들러
-  const handleNextStep = () => {
-    if (currentStep < 3) setCurrentStep((prev) => prev + 1);
-  };
-
-  const handlePreviousStep = () => {
-    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
-  };
-
-  // 폼 제출 핸들러
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    console.log(formData);
-
-    const response = await fetch("http://localhost:5000/makeproject", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      setShowModal(false);
-      alert(data.message);
-      window.location.href = "/require"
-    } else {
-      alert(data.message);
-    }
   };
 
 
@@ -219,148 +170,6 @@ const Project = () => {
             </button>
           ))}
         </div>
-
-
-        {/* 모달 창 */}
-        {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-96 relative">
-              {/* 상단 오른쪽 X 버튼 */}
-              <button
-                onClick={() => setShowModal(false)}
-                className="absolute top-2 right-2 text-gray-600 hover:text-black"
-              >
-                ✖
-              </button>
-
-              <h2 className="text-xl font-bold mb-4">새 프로젝트 설정</h2>
-
-              {/* 단계별 UI */}
-              {currentStep === 1 && (
-                <div>
-                  <div className="mb-4">
-                    <label className="block font-semibold mb-2">프로젝트 이름</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      required
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block font-semibold mb-2">설명</label>
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      rows="3"
-                      required
-                    ></textarea>
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 2 && (
-                <div>
-                  <div className="mb-4">
-                    <label className="block font-semibold mb-2">시작일</label>
-                    <input
-                      type="date"
-                      name="startDate"
-                      value={formData.startDate}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      required
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block font-semibold mb-2">예상 종료일</label>
-                    <input
-                      type="date"
-                      name="endDate"
-                      value={formData.endDate}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      required
-                    />
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 3 && (
-                <div>
-                  <div className="mb-4">
-                    <label className="block font-semibold mb-2">팀 구성</label>
-                    <input
-                      type="text"
-                      name="team"
-                      value={formData.team}
-                      onChange={handleInputChange}
-                      placeholder="예: 5명"
-                      className="w-full px-4 py-2 border rounded-lg"
-                      required
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block font-semibold mb-2">LLM 설정</label>
-                    <select
-                      name="llmSettings"
-                      value={formData.llmSettings}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      required
-                    >
-                      <option value="" disabled>
-                        선택해주세요
-                      </option>
-                      <option value="Claude">Claude</option>
-                      <option value="OpenAI">OpenAI</option>
-                    </select>
-
-                  </div>
-                </div>
-              )}
-
-              {/* 버튼 */}
-              <div className="flex justify-between mt-6">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-gray-300 rounded-lg"
-                  onClick={() => {
-                    if (currentStep === 1) setShowModal(false);
-                    else handlePreviousStep();
-                  }}
-                >
-                  {currentStep === 1 ? "취소" : "이전"}
-                </button>
-                {currentStep < 3 ? (
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-                    onClick={handleNextStep}
-                  >
-                    다음
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-                    onClick={handleFormSubmit}
-                  >
-                    생성
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-
-
-
 
       </div>
     </div>

@@ -58,7 +58,7 @@ const MVPProjectCreation = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:5000/getmembers", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getmembers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +130,7 @@ const MVPProjectCreation = () => {
     const formattedDateTime = now.toISOString().slice(0, 19).replace(/[-:T]/g, '');
     const indexName = `msp${formattedDateTime}`;
 
-    const response = await fetch("http://localhost:5000/createproject", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/createproject`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -165,7 +165,7 @@ const MVPProjectCreation = () => {
 
     setMessages([...messages, newMessage]);
 
-    const response = await fetch("http://localhost:5000/setproject", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/setproject`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -202,9 +202,9 @@ const MVPProjectCreation = () => {
 
   const handleTeamMemberToggle = (member) => {
     setProjectInfo(prev => {
-      const isSelected = prev.team.some(m => m.id === member.id);
+      const isSelected = prev.team.some(m => m.email === member.email);
       const newTeam = isSelected
-        ? prev.team.filter(m => m.id !== member.id)
+        ? prev.team.filter(m => m.email !== member.email)
         : [...prev.team, member];
       return { ...prev, team: newTeam };
     });
@@ -378,7 +378,7 @@ const MVPProjectCreation = () => {
       <div className="space-y-2">
         {filteredUsers.map(member => (
           <div
-            key={member.id}
+            key={member.email}
             className="flex items-center justify-between p-4 border rounded hover:bg-gray-50 cursor-pointer"
             onClick={() => handleTeamMemberToggle(member)}
           >
@@ -396,7 +396,7 @@ const MVPProjectCreation = () => {
 
             </div>
             <div className="flex items-center gap-3">
-              {projectInfo.team.some(m => m.id === member.id) ? (
+              {projectInfo.team.some(m => m.email === member.email) ? (
                 <Badge className="bg-blue-100 text-blue-700">선택됨</Badge>
               ) : (
                 <button className="text-blue-500">추가</button>

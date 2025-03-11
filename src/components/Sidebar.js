@@ -16,6 +16,7 @@ import { useSession, signOut } from "next-auth/react";
 
 export default function Sidebar() {
   const { data: session } = useSession();
+  // console.log(session);
 
   return (
     <div className="w-64 h-screen bg-gray-900 text-white flex flex-col">

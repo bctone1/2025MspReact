@@ -19,7 +19,7 @@ const AccountSession = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:5000/getmembers", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getmembers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const AccountSession = () => {
 
   // 삭제 버튼 클릭 시 실행
   const handleDelete = (userId) => {
-    setUsers(users.filter((user) => user['id'] !== userId));
+    setUsers(users.filter((user) => user['email'] !== userId));
   };
 
   return (
@@ -101,7 +101,7 @@ const AccountSession = () => {
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user['id']} className="border-b">
+                <tr key={user.email} className="border-b">
                   <td className="p-2">{user['name']}</td>
                   <td className="p-2">{user['email']}</td>
                   <td className="p-2">{user['group']}</td>
@@ -109,7 +109,7 @@ const AccountSession = () => {
                     <Badge className="bg-blue-500 text-white">{user['role']}</Badge>
                   </td>
                   <td className="p-2">
-                    <Badge className={user['status'] === "승인" ? "bg-green-500" : "bg-red-500"}>
+                    <Badge className={user['status'] === "active" ? "bg-green-500" : "bg-red-500"}>
                       {user['status']}
                     </Badge>
                   </td>
@@ -122,7 +122,7 @@ const AccountSession = () => {
                     </button>
                     <button
                       className="p-2 bg-red-500 text-white rounded"
-                      onClick={() => handleDelete(user['id'])}
+                      onClick={() => handleDelete(user['email'])}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

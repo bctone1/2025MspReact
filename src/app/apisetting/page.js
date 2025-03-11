@@ -21,7 +21,7 @@ const MVPRequirementSession = () => {
 
     const saveDatatable = async (req) => {
         console.log(req);
-        const response = await fetch("http://localhost:5000/saveApidata", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saveApidata`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const MVPRequirementSession = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:5000/requirementsList", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requirementsList`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -71,7 +71,7 @@ const MVPRequirementSession = () => {
 
         const fetchsystemData = async () => {
             try {
-                const response = await fetch("http://localhost:5000/SystemSettingList", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}0/SystemSettingList`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -103,7 +103,7 @@ const MVPRequirementSession = () => {
 
         const fetchapidata = async () => {
             try {
-                const response = await fetch("http://localhost:5000/apidata", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/apidata`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -181,7 +181,7 @@ const MVPRequirementSession = () => {
         setMessageInput('');
 
         setMessages([...messages, newMessage]);
-        const response = await fetch("http://localhost:5000/Requestapidata", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Requestapidata`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -25,7 +25,7 @@ export default function Dashboard() {
     }, [session, status]);
 
     const fetchProjects = async (email, role) => {
-        const response = await fetch("http://localhost:5000/projectsList", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projectsList`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export default function Dashboard() {
             console.log(data);
             setProjects(data);
         } else {
-            alert("오류발생");
+            console.log("프로젝트를 찾을수없음");
         }
 
 
@@ -66,7 +66,7 @@ export default function Dashboard() {
             setTimeout(() => setShowChat(true), 300);
         }
 
-        const response = await fetch("http://localhost:5000/getconversation", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getconversation`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
