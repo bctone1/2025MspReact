@@ -36,6 +36,27 @@ const MVPRequirementSession = () => {
         }
     }
 
+    const handleRemoveDatatable = async (req) => {
+        console.log(req);
+        console.log(project_id);
+        setdatatbales(datatbales.filter(r => r.id !== req.id));
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deleteDatatable`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ project_id: project_id, req: req }),
+        });
+        if (response.ok) {
+
+            const data = await response.json();
+            console.log(data.message);
+        } else {
+            console.error("Failed to fetch data");
+        }
+    };
+
 
 
     useEffect(() => {
@@ -202,10 +223,10 @@ const MVPRequirementSession = () => {
             table_name: data.table_name,
             description: data.description,
             definition: data.definition,
-            category: data.category,
-            priority: data.priority,
-            status: 'draft',
-            useCases: data.useCases,
+            // category: data.category,
+            // priority: data.priority,
+            // status: 'draft',
+            // useCases: data.useCases,
             constraints: data.constraints,
             columns: data.columns
         };
@@ -390,11 +411,12 @@ const MVPRequirementSession = () => {
                                             </button>
 
                                             <button
-                                                onClick={() => setdatatbales(datatbales.filter(r => r.id !== req.id))}
+                                                onClick={() => handleRemoveDatatable(req)}
                                                 className="p-1.5 hover:bg-red-100 rounded"
                                             >
                                                 <Trash2 className="w-4 h-4 text-red-500" />
                                             </button>
+
                                         </div>
                                     </div>
 

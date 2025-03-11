@@ -513,7 +513,7 @@ const MVPProjectCreation = () => {
           ) : (
             <div className="space-y-2">
               {projectInfo.team.map(member => (
-                <div key={member.id} className="flex items-center justify-between">
+                <div key={member.email} className="flex items-center justify-between">
                   <div>
                     <div className="font-medium">{member.name}</div>
                     <div className="text-sm text-gray-500">{member.role}</div>

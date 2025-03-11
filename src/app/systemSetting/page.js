@@ -35,6 +35,27 @@ const MVPRequirementSession = () => {
         }
     }
 
+    const handleRemoveSystemSetting = async (req) => {
+        console.log(req);
+        console.log(project_id);
+        setsystemDefinition(systemDefinition.filter(r => r.id !== req.id));
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deleteSystemSetting`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ project_id: project_id, req: req }),
+        });
+        if (response.ok) {
+
+            const data = await response.json();
+            console.log(data.message);
+        } else {
+            console.error("Failed to fetch data");
+        }
+    };
+
 
 
     useEffect(() => {
@@ -314,12 +335,14 @@ const MVPRequirementSession = () => {
                                             <button className="p-1.5 hover:bg-gray-100 rounded" onClick={() => saveSystemSetting(req)}>
                                                 <Save className="w-4 h-4 text-blue-500" />
                                             </button>
+
                                             <button
-                                                onClick={() => setsystemDefinition(systemDefinition.filter(r => r.id !== req.id))}
+                                                onClick={() => handleRemoveSystemSetting(req)}
                                                 className="p-1.5 hover:bg-red-100 rounded"
                                             >
                                                 <Trash2 className="w-4 h-4 text-red-500" />
                                             </button>
+                                            
                                         </div>
                                     </div>
 

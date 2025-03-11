@@ -17,7 +17,7 @@ const Project = () => {
   }, [session, status]); // session과 status가 변경될 때 실행
 
   const fetchProjects = async (email) => {
-    const response = await fetch("${process.env.NEXT_PUBLIC_API_URL}/projectsList", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projectsList`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

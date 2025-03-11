@@ -19,7 +19,7 @@ const MVPRequirementSession = () => {
     const searchParams = useSearchParams();
     const project_id = searchParams.get("project_id");
 
-    const saveDatatable = async (req) => {
+    const saveApidata = async (req) => {
         console.log(req);
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/saveApidata`, {
             method: "POST",
@@ -35,6 +35,27 @@ const MVPRequirementSession = () => {
             console.error("Failed to fetch data");
         }
     }
+
+    const handleRemoveApidata = async (req) => {
+        console.log(req);
+        console.log(project_id);
+        setdatatbales(datatbales.filter(r => r.id !== req.id));
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deleteApidata`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ project_id: project_id, req: req }),
+        });
+        if (response.ok) {
+
+            const data = await response.json();
+            console.log(data.message);
+        } else {
+            console.error("Failed to fetch data");
+        }
+    };
 
 
 
@@ -71,7 +92,7 @@ const MVPRequirementSession = () => {
 
         const fetchsystemData = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}0/SystemSettingList`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/SystemSettingList`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -203,12 +224,12 @@ const MVPRequirementSession = () => {
             table_name: data.table_name,
             description: data.description,
             definition: data.definition,
-            category: data.category,
-            priority: data.priority,
-            status: 'draft',
-            useCases: data.useCases,
-            constraints: data.constraints,
-            columns: data.columns,
+            // category: data.category,
+            // priority: data.priority,
+            // status: 'draft',
+            // useCases: data.useCases,
+            // constraints: data.constraints,
+            // columns: data.columns,
             apidata: data.apidata,
             api_name: data.api_name
         };
@@ -376,16 +397,17 @@ const MVPRequirementSession = () => {
                                             <Badge variant="outline">{req.api_name}</Badge>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <button className="p-1.5 hover:bg-gray-100 rounded" onClick={() => saveDatatable(req)}>
+                                            <button className="p-1.5 hover:bg-gray-100 rounded" onClick={() => saveApidata(req)}>
                                                 <Save className="w-4 h-4 text-blue-500" />
                                             </button>
-
                                             <button
-                                                onClick={() => setdatatbales(datatbales.filter(r => r.id !== req.id))}
+                                                onClick={() => handleRemoveApidata(req)}
                                                 className="p-1.5 hover:bg-red-100 rounded"
                                             >
                                                 <Trash2 className="w-4 h-4 text-red-500" />
                                             </button>
+
+                                            
                                         </div>
                                     </div>
 
